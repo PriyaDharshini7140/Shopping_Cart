@@ -1,9 +1,7 @@
 const express = require('express');
 const { findByIdAndDelete } = require('../model/customer');
 const router = express.Router();
-
 const Customer = require('../model/customer');
-
 
 // // Add new customers
 router.post('/', async (req, res) => {
@@ -40,7 +38,6 @@ router.post('/:cid', async (req, res) => {
 
 // getting orederdetails order id
 router.get('/:id', async (req, res) => {
-	
 	try {
 		const order = await Customer.findById(req.params.id);
 		if (!order) {
@@ -49,26 +46,24 @@ router.get('/:id', async (req, res) => {
 		res.send(order);
 	} catch (error) {
         res.status(500).send({ error: 'Internal server error' });
-       
-	}
+       }
 });
-// getting by customer_id
-router.get('/customers/:cid', async (req, res) => {
+// get products by customer id
+router.get('/product/:cid', async (req, res) => {
 	try {
-		const customer = await Customer.find(req.params.customer_id);
+		const customer = await Customer.findOne({customer_id:req.params.cid});
 		if (!customer) {
 			return res.status(404).send({ error: 'customer not found' });
 		}
-		res.send(customer);
+		 res.send(customer.Line_items);
 	} catch (error) {
         res.status(500).send({ error: 'Internal server error' });
-       
-	}
+       }
 });
+
 // total count of products and price 
 
 router.get('/products/:cid', async (req, res) => {
-	
 	try {
 		const customer = await Customer.findOne({customer_id:req.params.cid});
 		if (!customer) {
@@ -87,49 +82,10 @@ router.get('/products/:cid', async (req, res) => {
 		res.send(total);
 	} catch (error) {
         res.status(500).send({ error: 'Internal server error' });
-       
-	}
+       }
 });
 
-
-// update
-router.patch('/:id/:pid', async (req, res) => {
-	const updates =Object.keys(req.body);
-	console.log(updates);
-
-	try {
-		const orderId = req.params.id;
-	    const product_id = req.params.pid;
-		const customer = await Customer.findById(orderId);
-		
-		if (!customer) {
-			return res.status(404).send({ error: 'customer not found' });
-		}
-		const products = customer.Line_items;
-		console.log(products);
-		products.map((e)=>{
-			if(e._id == product_id){
-				  console.log(e.quantity);
-				//   if(e.quantity !== {
-				// 	  console.log(req.body);
-				//   }
-				 
-				}
-			});
-		// console.log(customer.Line_items.quantity);
-		// const quantity = customer.findById(product_id)
-		// console.log(quantity);
-		// updates.forEach((update) => {
-		// 	quantity[update] = req.body[update];
-		// });
-	customer.save()
-		res.send(customer);
-		
-	} catch (error) {
-		res.status(500).send({ error: 'Internal server error' });
-	}
-});
-
+// delete
 router.delete('/:id/delete/:pid', async (req, res) => {
 	const orderId = req.params.id;
 	const product_id = req.params.pid;
@@ -142,14 +98,37 @@ router.delete('/:id/delete/:pid', async (req, res) => {
 		customer.Line_items.map((e)=>{
 			 if(e._id == product_id)
 			  return e.remove()
-			
-	});
-	customer.save()
+			});
+	     customer.save()
 		res.send(customer);
+		} catch (error) {
+		res.status(500).send({ error: 'Internal server error' });
+	}
+});
+// update
+router.patch('/:id/:pid', async (req, res) =>  {
+	const updates = Object.keys(req.body)
+	 try {
+		const orderId = req.params.id;
+	    const product_id = req.params.pid;
+		const customer = await Customer.findById(orderId)
+		if (!customer) {
+			return res.status(404).send({ error: 'customer not found' });
+		}
+	 customer.Line_items.map((e)=>{
+			   if(e._id==product_id)
+			   {
+
+			   }
+	 })
+		
+	await customer.save()
+	   res.send(customer);
 		
 	} catch (error) {
 		res.status(500).send({ error: 'Internal server error' });
 	}
 });
+
 
 module.exports = router;

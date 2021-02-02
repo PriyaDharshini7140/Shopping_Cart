@@ -1,9 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const LineSchema = new Schema({
-   
-   
-        price:{
+       price:{
             type:String,
             required:true
         },
@@ -28,12 +26,8 @@ const LineSchema = new Schema({
     }
    
 });
-
-
 const customerSchema = new Schema({
-    
-   
-    created_at:{
+     created_at:{
         type:Date,
         default:Date.now()
     },
@@ -44,12 +38,6 @@ const customerSchema = new Schema({
     Line_items:{
         type:[LineSchema],
         default:[]
-    
     }
-
-
-        
-          });
-
-
+    });
 module.exports = Customer = mongoose.model('customers',customerSchema);
