@@ -18,7 +18,6 @@ router.post('/', async (req, res) => {
 // ADD new products
 
 router.post('/:cid', async (req, res) => {
-	
 	try {
 		const customer = await Customer.findOne({customer_id:req.params.cid});
 		if (!customer) {
@@ -108,6 +107,7 @@ router.delete('/:id/delete/:pid', async (req, res) => {
 // update
 router.patch('/:id/:pid', async (req, res) =>  {
 	const updates = Object.keys(req.body)
+	console.log(updates);
 	 try {
 		const orderId = req.params.id;
 	    const product_id = req.params.pid;
@@ -117,11 +117,12 @@ router.patch('/:id/:pid', async (req, res) =>  {
 		}
 	 customer.Line_items.map((e)=>{
 			   if(e._id==product_id)
-			   {
-
+			   {  
+				   console.log("beforeupdate");
+				   e.quantity = req.body.quantity
+				   console.log("afterupdate");
 			   }
-	 })
-		
+			 })
 	await customer.save()
 	   res.send(customer);
 		
